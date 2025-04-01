@@ -1,0 +1,36 @@
+# Rust
+/notification-service/target/
+/notification-service/Cargo.lock
+**/*.rs.bk
+
+# Node/Bun/SvelteKit
+/res-ads/node_modules/
+/res-ads/.svelte-kit/
+/res-ads/build/
+/res-ads/.wrangler/
+/res-ads/dist/
+/res-ads/.env
+/res-ads/.env.*
+!/res-ads/.env.example
+
+# Bun specific
+/res-ads/bun.lockb
+
+# General
+.DS_Store
+*.log
+*.swp
+.env
+.env.*
+!.env.example
+
+# Docker
+.dockerignore
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
