@@ -1,10 +1,10 @@
 // src/lib/server/db.ts
-import { Pool } from 'pg';
-import type { QueryResult } from 'pg';
+import postgres from 'postgres';
+import type { QueryResult } from 'postgres';
 
 // Environment variables should be set in your .env file
 // DATABASE_URL=postgres://username:password@localhost:5432/resads
-const pool = new Pool({
+const pool = postgres({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });

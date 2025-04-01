@@ -43,9 +43,12 @@
 		"vite": "^6.2.3"
 	},
 	"dependencies": {
+		"bun": "^1.2.8",
 		"chart.js": "^4.4.8",
 		"date-fns": "^4.1.0",
 		"lucide": "^0.484.0",
+		"pg": "^8.14.1",
+		"postgres": "^3.4.5",
 		"svelvet": "^11.0.5"
 	}
 }
