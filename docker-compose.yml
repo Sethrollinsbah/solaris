@@ -1,80 +1,21 @@
-name: resads
-
-services:
-  # PostgreSQL Database
-  db:
-    image: postgres:16-alpine
-    container_name: resads-postgres
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: resads_user
-      POSTGRES_PASSWORD: resads_password
-      POSTGRES_DB: resads
-    volumes:
-      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
-      - postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U resads_user -d resads"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-  
-  # pgAdmin for database management
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: resads-pgadmin
-    restart: always
-    depends_on:
-      - db
-    ports:
-      - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@resads.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-
-  # SvelteKit Frontend Application
-  frontend:
-    build:
-      context: ./res-ads
-      dockerfile: Dockerfile
-    container_name: resads-frontend
-    restart: always
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: postgres://resads_user:resads_password@db:5432/resads
-      NODE_ENV: production
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
-  # Rust Notification Service
-  notification:
-    build:
-      context: ./notification-service
-      dockerfile: Dockerfile
-    container_name: resads-notification
-    restart: always
-    depends_on:
-      db:
-        condition: service_healthy
-      frontend:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://resads_user:resads_password@db:5432/resads
-      RUST_LOG: info
-
-# Persistent volumes
-volumes:
-  postgres-data:
-  pgadmin-data:
+# SvelteKit Frontend Application
+frontend:
+  build:
+    context: ./res-ads
+    dockerfile: Dockerfile
+  container_name: resads-frontend
+  restart: always
+  depends_on:
+    db:
+      condition: service_healthy
+  ports:
+    - "3000:3000"
+  environment:
+    DATABASE_URL: postgres://resads_user:resads_password@db:5432/resads
+    NODE_ENV: production
+  healthcheck:
+    test: ["CMD-SHELL", "wget -q --spider http://localhost:3000 || exit 1"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 30s

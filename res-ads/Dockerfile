@@ -31,7 +31,12 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 # Copy built files and package.json
-COPY --from=builder /app/build ./build
+# Adjust this path to match the actual build output directory
+COPY --from=builder /app/.svelte-kit/cloudflare ./build
+# Or try one of these alternatives if the above doesn't work:
+# COPY --from=builder /app/build ./build
+# COPY --from=builder /app/.svelte-kit/build ./build
+
 COPY package.json ./
 # Copy lock file with wildcard to handle different possibilities
 COPY bun.lock* ./
