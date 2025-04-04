@@ -4,9 +4,8 @@ WORKDIR /app
 
 # Dependencies stage
 FROM base AS deps
-# Copy package.json (and lock file if it exists)
+# Copy package.json (and lock files)
 COPY package.json ./
-# Using wildcards to handle both bun.lock and bun.lockb (or none)
 COPY bun.lock* ./
 # Install dependencies
 RUN bun install
@@ -30,22 +29,13 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy built files and package.json
-# Adjust this path to match the actual build output directory
-COPY --from=builder /app/.svelte-kit/cloudflare ./build
-# Or try one of these alternatives if the above doesn't work:
-# COPY --from=builder /app/build ./build
-# COPY --from=builder /app/.svelte-kit/build ./build
-
+# Copy built files from builder stage
+COPY --from=builder /app/build ./build
+COPY --from=builder /app/node_modules ./node_modules
 COPY package.json ./
-# Copy lock file with wildcard to handle different possibilities
-COPY bun.lock* ./
-
-# Install only production dependencies
-RUN bun install --production
 
 # Expose port
 EXPOSE ${PORT}
 
-# Run the app
-CMD ["bun", "run", "build/index.js"]
+# Run the app with the Cloudflare adapter
+CMD ["bun", "run", "start"]

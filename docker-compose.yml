@@ -1,21 +1,56 @@
-# SvelteKit Frontend Application
-frontend:
-  build:
-    context: ./res-ads
-    dockerfile: Dockerfile
-  container_name: resads-frontend
-  restart: always
-  depends_on:
-    db:
-      condition: service_healthy
-  ports:
-    - "3000:3000"
-  environment:
-    DATABASE_URL: postgres://resads_user:resads_password@db:5432/resads
-    NODE_ENV: production
-  healthcheck:
-    test: ["CMD-SHELL", "wget -q --spider http://localhost:3000 || exit 1"]
-    interval: 30s
-    timeout: 10s
-    retries: 3
-    start_period: 30s
+services:
+  # Database
+  db:
+    image: postgres:15-alpine
+    container_name: resads-db
+    restart: always
+    environment:
+      POSTGRES_USER: resads_user
+      POSTGRES_PASSWORD: resads_password
+      POSTGRES_DB: resads
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./res-ads/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U resads_user -d resads"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+  
+  # SvelteKit Frontend Application
+  frontend:
+    build:
+      context: ./res-ads
+      dockerfile: Dockerfile
+    container_name: resads-frontend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://resads_user:resads_password@db:5432/resads
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+  
+  # Rust Notification Service
+  notification:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: resads-notification
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres-data:

@@ -43,6 +43,7 @@
 		"vite": "^6.2.3"
 	},
 	"dependencies": {
+		"@sveltejs/adapter-node": "^5.2.12",
 		"bun": "^1.2.8",
 		"chart.js": "^4.4.8",
 		"date-fns": "^4.1.0",
