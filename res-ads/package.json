@@ -11,7 +11,11 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"db:start": "docker compose up",
+		"db:push": "drizzle-kit push",
+		"db:migrate": "drizzle-kit migrate",
+		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.7",
@@ -22,6 +26,7 @@
 		"autoprefixer": "^10.4.21",
 		"bits-ui": "0.22.0",
 		"clsx": "^2.1.1",
+		"drizzle-kit": "^0.30.2",
 		"eslint": "^9.23.0",
 		"eslint-config-prettier": "^10.1.1",
 		"eslint-plugin-svelte": "^2.46.1",
@@ -47,6 +52,7 @@
 		"bun": "^1.2.8",
 		"chart.js": "^4.4.8",
 		"date-fns": "^4.1.0",
+		"drizzle-orm": "^0.40.0",
 		"lucide": "^0.484.0",
 		"pg": "^8.14.1",
 		"postgres": "^3.4.5",
